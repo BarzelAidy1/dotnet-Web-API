@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8' />
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+  <title>אתר הפעלות במה</title>
+  <script>
+
+    function addEvent(){
+      axios.post("https://eventsapi.onrender.com/api/Events",{
+        title: "new event",
+        start:"2024-01-01",
+      })
+      .then((res)=>{
+        document.getElementById("result").innerHTML=JSON.stringify(res.data);
+      });
+    }
+
+    function updateEvent(){
+      let id=1;
+      axios.put(`https://eventsapi.onrender.com/api/Events/${id}`,{
+        title: "updated event",
+        start:"2023-12-12",
+      }).then((res)=>{
+        document.getElementById("result").innerHTML=JSON.stringify(res.data)+"עודכן בהצלחה";
+      });
+    }
+
+    function deleteEvent(){
+      let id=3;
+      axios.delete(`https://eventsapi.onrender.com/api/Events/${id}`).then((res)=>{
+        document.getElementById("result").innerHTML="נמחק בהצלחה";
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth'
+      });
+      calendar.render();
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      axios.get("https://localhost:7176/api/Events").then((res)=>{
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events:res.data,
+      });
+      calendar.render();
+      });     
+    });
+
+    
+  </script>
+</head>
+
+<body>
+  <h1>הפעלות במה</h1>
+  <button onclick="addEvent()">Add Event- post</button>
+  <button onclick="updateEvent()">Update Event- put</button>
+  <button onclick="deleteEvent()">delete Event</button>
+  <p>Request Result</p>
+  <div id="result"></div>
+  <br />
+  <div id='calendar'></div>
+</body>
+
+</html>
